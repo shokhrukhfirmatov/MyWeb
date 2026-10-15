@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Discover thoughtful stays and book your next getaway with StayHaven." />
+  <title>StayHaven — Find your place to stay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="StayHaven home"><span class="brand-mark">S</span><span>stayhaven</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#stays">Explore stays</a>
+      <a href="#why-us">Why StayHaven</a>
+      <a href="#footer">Contact</a>
+    </nav>
+    <a class="header-cta" href="#search-panel">Find a stay <span aria-hidden="true">↗</span></a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-image" role="img" aria-label="Sunlit coastal hotel overlooking the sea"></div>
+      <div class="hero-content">
+        <p class="eyebrow"><span class="eyebrow-line"></span> YOUR NEXT CHAPTER STARTS HERE</p>
+        <h1>Find a stay<br>that feels <em>like you.</em></h1>
+        <p class="hero-copy">Considered spaces, memorable places, and room to slow down. Your next great escape is closer than you think.</p>
+        <a class="text-link light-link" href="#stays">Explore our stays <span>↓</span></a>
+      </div>
+      <div class="hero-note"><span class="note-dot"></span> Handpicked stays for curious travellers</div>
+    </section>
+
+    <section class="search-wrap" id="search-panel" aria-label="Search hotels">
+      <form class="search-panel" id="search-form">
+        <label class="search-field destination-field">
+          <span class="field-icon">⌖</span>
+          <span class="field-content"><span class="field-label">DESTINATION</span>
+          <input id="destination" type="text" placeholder="Where do you want to go?" autocomplete="off"></span>
+        </label>
+        <label class="search-field">
+          <span class="field-icon">▦</span>
+          <span class="field-content"><span class="field-label">CHECK IN</span>
+          <input id="checkin" type="date" required></span>
+        </label>
+        <label class="search-field">
+          <span class="field-icon">▦</span>
+          <span class="field-content"><span class="field-label">CHECK OUT</span>
+          <input id="checkout" type="date" required></span>
+        </label>
+        <label class="search-field guests-field">
+          <span class="field-icon">♙</span>
+          <span class="field-content"><span class="field-label">GUESTS</span>
+          <select id="guests"><option value="1">1 guest</option><option value="2" selected>2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5 guests</option><option value="6">6 guests</option></select></span>
+        </label>
+        <button class="search-button" type="submit">Search stays <span>↗</span></button>
+      </form>
+      <p class="search-hint" id="search-hint" aria-live="polite">Choose your dates and destination to find your kind of getaway.</p>
+    </section>
+
+    <section class="section stays-section" id="stays">
+      <div class="section-heading">
+        <div><p class="eyebrow dark-eyebrow">A FEW PLACES WE LOVE</p><h2>Stays worth <em>the journey.</em></h2></div>
+        <p class="section-intro">From slow mornings by the sea to design-led city hideaways, find a place that makes the trip.</p>
+      </div>
+      <div class="filter-row" aria-label="Filter stays">
+        <div class="filter-pills" id="filter-pills">
+          <button class="filter-pill active" data-filter="all">All stays <span>06</span></button>
+          <button class="filter-pill" data-filter="beach">Beachside</button>
+          <button class="filter-pill" data-filter="city">City breaks</button>
+          <button class="filter-pill" data-filter="nature">Nature escapes</button>
+        </div>
+        <label class="sort-control">Sort by <select id="sort-select"><option value="recommended">Recommended</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="rating">Guest rating</option></select></label>
+      </div>
+      <div class="results-message" id="results-message" aria-live="polite"></div>
+      <div class="hotel-grid" id="hotel-grid">
+        <article class="hotel-card" data-id="1" data-category="beach" data-price="145" data-rating="4.9" data-location="bodrum turkey">
+          <div class="hotel-photo photo-one"><span class="photo-tag">GUEST FAVOURITE</span><button class="save-button" aria-label="Save Azure Cove" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">BODRUM, TURKEY <span class="rating">★ 4.9</span></div><h3>Azure Cove</h3><p class="hotel-description">A peaceful coastal hideaway with salt air and slow afternoons.</p><div class="hotel-bottom"><p><strong>€145</strong> <span>/ night</span></p><button class="book-button" data-book="1">View stay <span>↗</span></button></div></div>
+        </article>
+        <article class="hotel-card" data-id="2" data-category="city" data-price="118" data-rating="4.8" data-location="istanbul turkey">
+          <div class="hotel-photo photo-two"><button class="save-button" aria-label="Save The Luma House" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">ISTANBUL, TURKEY <span class="rating">★ 4.8</span></div><h3>The Luma House</h3><p class="hotel-description">A warm, design-led base in the heart of the old city.</p><div class="hotel-bottom"><p><strong>€118</strong> <span>/ night</span></p><button class="book-button" data-book="2">View stay <span>↗</span></button></div></div>
+        </article>
+        <article class="hotel-card" data-id="3" data-category="nature" data-price="162" data-rating="4.9" data-location="cappadocia turkey">
+          <div class="hotel-photo photo-three"><span class="photo-tag">RARE FIND</span><button class="save-button" aria-label="Save Stone & Sky" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">CAPPADOCIA, TURKEY <span class="rating">★ 4.9</span></div><h3>Stone &amp; Sky</h3><p class="hotel-description">Quiet cave suites and wide-open skies at sunrise.</p><div class="hotel-bottom"><p><strong>€162</strong> <span>/ night</span></p><button class="book-button" data-book="3">View stay <span>↗</span></button></div></div>
+        </article>
+        <article class="hotel-card" data-id="4" data-category="beach" data-price="134" data-rating="4.7" data-location="antalya turkey">
+          <div class="hotel-photo photo-four"><button class="save-button" aria-label="Save Palm & Tide" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">ANTALYA, TURKEY <span class="rating">★ 4.7</span></div><h3>Palm &amp; Tide</h3><p class="hotel-description">Barefoot luxury, bright rooms, and a beach just steps away.</p><div class="hotel-bottom"><p><strong>€134</strong> <span>/ night</span></p><button class="book-button" data-book="4">View stay <span>↗</span></button></div></div>
+        </article>
+        <article class="hotel-card" data-id="5" data-category="city" data-price="126" data-rating="4.6" data-location="izmir turkey">
+          <div class="hotel-photo photo-five"><button class="save-button" aria-label="Save House of Fig" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">IZMIR, TURKEY <span class="rating">★ 4.6</span></div><h3>House of Fig</h3><p class="hotel-description">A little urban sanctuary made for long weekends.</p><div class="hotel-bottom"><p><strong>€126</strong> <span>/ night</span></p><button class="book-button" data-book="5">View stay <span>↗</span></button></div></div>
+        </article>
+        <article class="hotel-card" data-id="6" data-category="nature" data-price="174" data-rating="5.0" data-location="sapanca turkey">
+          <div class="hotel-photo photo-six"><span class="photo-tag">NEW STAY</span><button class="save-button" aria-label="Save Fernwood Cabin" aria-pressed="false">♡</button></div>
+          <div class="hotel-info"><div class="hotel-location">SAPANCA, TURKEY <span class="rating">★ 5.0</span></div><h3>Fernwood Cabin</h3><p class="hotel-description">A forest-framed cabin for switching off and reconnecting.</p><div class="hotel-bottom"><p><strong>€174</strong> <span>/ night</span></p><button class="book-button" data-book="6">View stay <span>↗</span></button></div></div>
+        </article>
+      </div>
+      <div class="empty-state" id="empty-state" hidden><span>⌕</span><h3>No stays found just yet</h3><p>Try another destination or choose a different category.</p><button class="outline-button" id="reset-search">Clear filters</button></div>
+    </section>
+
+    <section class="story-section" id="why-us">
+      <div class="story-image" role="img" aria-label="Calm hotel terrace with natural textures"></div>
+      <div class="story-copy"><p class="eyebrow dark-eyebrow">TRAVEL, A LITTLE DIFFERENTLY</p><h2>Good stays.<br><em>Better stories.</em></h2><p>We believe where you stay is part of the story. That's why we look for thoughtful details, welcoming people, and places with a sense of soul.</p><div class="promise-list"><div><span>01</span><p><strong>Places with personality</strong><br>Small details, lasting memories.</p></div><div><span>02</span><p><strong>Thoughtful by design</strong><br>Comfort without compromise.</p></div><div><span>03</span><p><strong>Travel on your terms</strong><br>Your pace, your kind of place.</p></div></div></div>
+    </section>
+
+    <section class="newsletter-section"><div><p class="eyebrow">A NOTE FROM SOMEWHERE</p><h2>Good places, straight<br>to your <em>inbox.</em></h2></div><form id="newsletter-form" class="newsletter-form"><label for="newsletter-email">A little inspiration for your next escape.</label><div class="newsletter-input"><input id="newsletter-email" type="email" placeholder="Your email address" required><button type="submit" aria-label="Subscribe">↗</button></div><p id="newsletter-message" aria-live="polite">No spam. Just good places and occasional offers.</p></form></section>
+  </main>
+
+  <footer class="site-footer" id="footer"><a class="brand footer-brand" href="#"><span class="brand-mark">S</span><span>stayhaven</span></a><p>Find your place. Make it a story.</p><div class="footer-links"><a href="#stays">Explore stays</a><a href="#why-us">Our story</a><a href="mailto:hello@example.com">Get in touch</a></div><small>© <span id="year"></span> StayHaven. Demo website for learning purposes.</small></footer>
+
+  <dialog class="booking-dialog" id="booking-dialog" aria-labelledby="booking-title">
+    <div class="dialog-top"><span class="dialog-kicker">YOUR NEXT GETAWAY</span><button type="button" class="close-dialog" id="close-dialog" aria-label="Close booking form">×</button></div>
+    <div id="booking-hotel-summary" class="booking-hotel-summary"></div>
+    <h2 id="booking-title">Make it <em>yours.</em></h2>
+    <p class="dialog-copy">Tell us a little about your trip to request a booking.</p>
+    <form id="booking-form">
+      <input type="hidden" id="booking-hotel-id">
+      <div class="form-row"><label>Check in<input id="booking-checkin" type="date" required></label><label>Check out<input id="booking-checkout" type="date" required></label></div>
+      <div class="form-row"><label>Guests<select id="booking-guests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label><label>Your name<input id="booking-name" type="text" placeholder="Full name" required minlength="2"></label></div>
+      <label>Email address<input id="booking-email" type="email" placeholder="you@example.com" required></label>
+      <label>Anything else? <span class="optional">(optional)</span><textarea id="booking-notes" rows="3" placeholder="Arrival time, special requests…"></textarea></label>
+      <div class="booking-total" id="booking-total">Select dates to estimate your stay.</div>
+      <button type="submit" class="search-button submit-booking">Request booking <span>↗</span></button>
+      <p class="demo-notice">Demo only: this form does not take payment or send a real reservation.</p>
+    </form>
+    <div class="booking-success" id="booking-success" hidden><div class="success-icon">✓</div><h3>Request prepared!</h3><p id="success-message"></p><p class="demo-notice">This is a frontend demo. No reservation has been sent to a hotel.</p><button class="search-button" id="finish-booking" type="button">Done <span>✓</span></button></div>
+  </dialog>
+</body>
+</html>
