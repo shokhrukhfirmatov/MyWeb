@@ -1,0 +1,209 @@
+const hotels = [
+  {id:"1",name:"Azure Cove",location:"Bodrum, Turkey",price:145,rating:4.9,category:"beach",image:"photo-one",search:"bodrum turkey"},
+  {id:"2",name:"The Luma House",location:"Istanbul, Turkey",price:118,rating:4.8,category:"city",image:"photo-two",search:"istanbul turkey"},
+  {id:"3",name:"Stone & Sky",location:"Cappadocia, Turkey",price:162,rating:4.9,category:"nature",image:"photo-three",search:"cappadocia turkey"},
+  {id:"4",name:"Palm & Tide",location:"Antalya, Turkey",price:134,rating:4.7,category:"beach",image:"photo-four",search:"antalya turkey"},
+  {id:"5",name:"House of Fig",location:"Izmir, Turkey",price:126,rating:4.6,category:"city",image:"photo-five",search:"izmir turkey"},
+  {id:"6",name:"Fernwood Cabin",location:"Sapanca, Turkey",price:174,rating:5.0,category:"nature",image:"photo-six",search:"sapanca turkey"}
+];
+
+const searchForm = document.querySelector("#search-form");
+const destinationInput = document.querySelector("#destination");
+const checkinInput = document.querySelector("#checkin");
+const checkoutInput = document.querySelector("#checkout");
+const guestsInput = document.querySelector("#guests");
+const searchHint = document.querySelector("#search-hint");
+const resultsMessage = document.querySelector("#results-message");
+const hotelGrid = document.querySelector("#hotel-grid");
+const emptyState = document.querySelector("#empty-state");
+const sortSelect = document.querySelector("#sort-select");
+const bookingDialog = document.querySelector("#booking-dialog");
+let activeCategory = "all";
+let searchDestination = "";
+
+const localDate = (date) => {
+  const offset = date.getTimezoneOffset();
+  return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 10);
+};
+const today = localDate(new Date());
+checkinInput.min = today;
+checkoutInput.min = today;
+document.querySelector("#booking-checkin").min = today;
+document.querySelector("#booking-checkout").min = today;
+document.querySelector("#year").textContent = new Date().getFullYear();
+
+checkinInput.addEventListener("change", () => {
+  checkoutInput.min = checkinInput.value || today;
+  if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
+    checkoutInput.value = "";
+  }
+});
+checkoutInput.addEventListener("change", () => {
+  if (checkinInput.value && checkoutInput.value <= checkinInput.value) {
+    searchHint.textContent = "Check-out must be after check-in.";
+    checkoutInput.value = "";
+  }
+});
+
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!checkinInput.value || !checkoutInput.value) {
+    searchHint.textContent = "Please choose both check-in and check-out dates.";
+    (!checkinInput.value ? checkinInput : checkoutInput).focus();
+    return;
+  }
+  if (checkoutInput.value <= checkinInput.value) {
+    searchHint.textContent = "Check-out must be after check-in.";
+    checkoutInput.focus();
+    return;
+  }
+  searchDestination = destinationInput.value.trim().toLowerCase();
+  activeCategory = "all";
+  document.querySelectorAll(".filter-pill").forEach(button => button.classList.toggle("active", button.dataset.filter === "all"));
+  renderHotels();
+  const nights = getNights(checkinInput.value, checkoutInput.value);
+  searchHint.textContent = `${nights} night${nights === 1 ? "" : "s"} · ${guestsInput.value} guest${guestsInput.value === "1" ? "" : "s"} · Dates selected. Choose a stay to request a booking.`;
+  document.querySelector("#stays").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+function getNights(start, end) {
+  return Math.round((new Date(`${end}T12:00:00`) - new Date(`${start}T12:00:00`)) / 86400000);
+}
+
+function renderHotels() {
+  let visible = hotels.filter(hotel => {
+    const categoryMatch = activeCategory === "all" || hotel.category === activeCategory;
+    const destinationMatch = !searchDestination || hotel.search.includes(searchDestination) || hotel.location.toLowerCase().includes(searchDestination) || hotel.name.toLowerCase().includes(searchDestination);
+    return categoryMatch && destinationMatch;
+  });
+  const sort = sortSelect.value;
+  if (sort === "low") visible.sort((a,b) => a.price - b.price);
+  if (sort === "high") visible.sort((a,b) => b.price - a.price);
+  if (sort === "rating") visible.sort((a,b) => b.rating - a.rating);
+  hotelGrid.querySelectorAll(".hotel-card").forEach(card => card.hidden = !visible.some(hotel => hotel.id === card.dataset.id));
+  hotelGrid.querySelectorAll(".hotel-card").forEach(card => {
+    const index = visible.findIndex(hotel => hotel.id === card.dataset.id);
+    if (index >= 0) hotelGrid.appendChild(card);
+  });
+  emptyState.hidden = visible.length !== 0;
+  hotelGrid.hidden = visible.length === 0;
+  resultsMessage.textContent = `${visible.length} ${visible.length === 1 ? "stay" : "stays"} to explore${searchDestination ? ` for “${destinationInput.value.trim()}”` : ""}.`;
+}
+
+document.querySelector("#filter-pills").addEventListener("click", event => {
+  const button = event.target.closest("[data-filter]");
+  if (!button) return;
+  activeCategory = button.dataset.filter;
+  document.querySelectorAll(".filter-pill").forEach(pill => pill.classList.toggle("active", pill === button));
+  renderHotels();
+});
+sortSelect.addEventListener("change", renderHotels);
+document.querySelector("#reset-search").addEventListener("click", () => {
+  searchDestination = "";
+  destinationInput.value = "";
+  activeCategory = "all";
+  sortSelect.value = "recommended";
+  document.querySelectorAll(".filter-pill").forEach(pill => pill.classList.toggle("active", pill.dataset.filter === "all"));
+  renderHotels();
+});
+hotelGrid.addEventListener("click", event => {
+  const saveButton = event.target.closest(".save-button");
+  if (saveButton) {
+    const saved = saveButton.getAttribute("aria-pressed") !== "true";
+    saveButton.setAttribute("aria-pressed", String(saved));
+    saveButton.textContent = saved ? "♥" : "♡";
+    saveButton.setAttribute("aria-label", `${saved ? "Remove" : "Save"} ${saveButton.getAttribute("aria-label").replace(/^(Save|Remove) /, "")}`);
+    return;
+  }
+  const bookButton = event.target.closest("[data-book]");
+  if (bookButton) openBooking(bookButton.dataset.book);
+});
+
+function openBooking(id) {
+  const hotel = hotels.find(item => item.id === id);
+  if (!hotel) return;
+  document.querySelector("#booking-form").hidden = false;
+  document.querySelector("#booking-success").hidden = true;
+  document.querySelector("#booking-hotel-id").value = hotel.id;
+  document.querySelector("#booking-hotel-summary").innerHTML = `<div class="summary-thumb ${hotel.image}"></div><div><div class="summary-location">${hotel.location.toUpperCase()}</div><div class="summary-name">${hotel.name}</div><div class="summary-location">★ ${hotel.rating.toFixed(1)} &nbsp;·&nbsp; €${hotel.price} / night</div></div>`;
+  const bookIn = document.querySelector("#booking-checkin");
+  const bookOut = document.querySelector("#booking-checkout");
+  bookIn.value = checkinInput.value || "";
+  bookOut.value = checkoutInput.value || "";
+  bookIn.min = today;
+  bookOut.min = bookIn.value || today;
+  document.querySelector("#booking-guests").value = guestsInput.value || "2";
+  document.querySelector("#booking-total").textContent = "Select dates to estimate your stay.";
+  updateTotal();
+  bookingDialog.showModal();
+}
+document.querySelector("#close-dialog").addEventListener("click", () => bookingDialog.close());
+bookingDialog.addEventListener("click", event => {
+  if (event.target === bookingDialog) bookingDialog.close();
+});
+document.querySelector("#booking-checkin").addEventListener("change", () => {
+  const start = document.querySelector("#booking-checkin");
+  const end = document.querySelector("#booking-checkout");
+  end.min = start.value || today;
+  if (end.value && end.value <= start.value) end.value = "";
+  updateTotal();
+});
+document.querySelector("#booking-checkout").addEventListener("change", updateTotal);
+function updateTotal() {
+  const hotel = hotels.find(item => item.id === document.querySelector("#booking-hotel-id").value);
+  const start = document.querySelector("#booking-checkin").value;
+  const end = document.querySelector("#booking-checkout").value;
+  const total = document.querySelector("#booking-total");
+  if (!hotel || !start || !end || end <= start) {
+    total.textContent = "Select valid check-in and check-out dates to estimate your stay.";
+    return;
+  }
+  const nights = getNights(start, end);
+  total.innerHTML = `<span>${nights} night${nights === 1 ? "" : "s"} × €${hotel.price}</span><strong style="float:right">Estimated total: €${nights * hotel.price}</strong><br><small>Before taxes or additional fees.</small>`;
+}
+document.querySelector("#booking-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const hotel = hotels.find(item => item.id === document.querySelector("#booking-hotel-id").value);
+  const start = document.querySelector("#booking-checkin").value;
+  const end = document.querySelector("#booking-checkout").value;
+  if (!hotel || !start || !end || end <= start) {
+    document.querySelector("#booking-total").textContent = "Please select a valid check-in and check-out date.";
+    return;
+  }
+  const name = document.querySelector("#booking-name").value.trim();
+  const email = document.querySelector("#booking-email").value.trim();
+  const nights = getNights(start, end);
+  document.querySelector("#success-message").textContent = `Thanks, ${name}. Your demo request for ${hotel.name} (${nights} night${nights === 1 ? "" : "s"}, estimated €${nights * hotel.price}) is ready. In a live website, this is where the request would be sent to a booking service.`;
+  document.querySelector("#booking-form").hidden = true;
+  document.querySelector("#booking-success").hidden = false;
+});
+document.querySelector("#finish-booking").addEventListener("click", () => bookingDialog.close());
+
+document.querySelector("#newsletter-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const emailInput = document.querySelector("#newsletter-email");
+  const message = document.querySelector("#newsletter-message");
+  if (!emailInput.checkValidity()) {
+    emailInput.reportValidity();
+    return;
+  }
+  message.textContent = "Thanks for your interest! Newsletter sign-up is a demo and hasn't been saved.";
+  emailInput.value = "";
+});
+
+const menuToggle = document.querySelector("#menu-toggle");
+const mainNav = document.querySelector(".main-nav");
+menuToggle.addEventListener("click", () => {
+  const open = mainNav.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(open));
+  menuToggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  menuToggle.textContent = open ? "×" : "☰";
+});
+mainNav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+  mainNav.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Open navigation");
+  menuToggle.textContent = "☰";
+}));
+
+renderHotels();
